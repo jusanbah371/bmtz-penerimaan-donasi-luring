@@ -1,544 +1,471 @@
 # SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
 
-## Subsistem Penerimaan Donasi Luring — BMTZ
+## Subsistem Penerimaan Donasi Luring — Baitulmal Tazkia (BMTZ)
 
 * **ID Dokumen:** BMTZ-SRS-OFFLINE-001
-* **Versi:** 0.1
-* **Status:** Draft — Untuk Validasi Stakeholder
-* **Tanggal:** 21 Oktober 2026
-* **Organisasi:** Baitulmal Tazkia
-* **Kelompok:** Kelompok 6
-* **Bahasa:** Indonesia
-* **Standar Acuan:** ISO/IEC/IEEE 29148:2018
-* **Acuan Kualitas Tambahan:** ISO/IEC 25010:2023
+* **Versi Baseline Candidate:** 1.0.0 (Full Specification)
+* **Tanggal:** 4 November 2026
+* **Organisasi:** Baitulmal Tazkia (BMTZ)
+* **Kelompok:** Kelompok 6 — Klaster Kanal dan Luring
+* **Program Studi:** Sistem Informasi STMIK Tazkia (Gasal 2026/2027)
+* **Standar Acuan Utama:** ISO/IEC/IEEE 29148:2018 (subklausul 8.5.2 & 9.6)
+* **Acuan Kualitas Tambahan:** ISO/IEC 25010:2023 & UU No. 27 Tahun 2022 (PDP)
 
 ---
 
-### Kontrol Dokumen
+### Kontrol Dokumen & Riwayat Versi
 
-| Versi | Tanggal | Deskripsi Perubahan | Status |
-| :--- | :--- | :--- | :--- |
-| 0.1 | 21 Oktober 2026 | Penyusunan awal SRS berdasarkan workbook proyek dan informasi yang tersedia. | Draft |
+| Versi | Tanggal | Deskripsi Perubahan | Penulis / Peran | Status Approval |
+| :--- | :--- | :--- | :--- | :--- |
+| **0.1** | 21/10/2026 | Draf awal struktur ISO 29148 berbasis analisis awal workbook. | Tim Analis Kelompok 6 | Draft Review |
+| **0.9** | 04/11/2026 | Pelengkapan Notasi BPMN XML, Kamus Data Rinci, UI Mockup, & NFR Terukur. | Tim Analis Kelompok 6 | Internal Review |
+| **1.0.0** | 04/11/2026 | Pembekuan Baseline Candidate SRS Minggu 4 untuk Walkthrough PIC & Dosen. | Kelompok 6 & PIC BMTZ | Ready for Sign-Off |
 
-### Persetujuan Dokumen
+### Persetujuan Dokumen (Sign-Off Record)
 
-| Peran | Nama | Status Persetujuan |
-| :--- | :--- | :--- |
-| Perwakilan stakeholder BMTZ | Belum ditentukan | Belum disetujui |
-| Koordinator proyek | Belum ditentukan | Belum disetujui |
-| Perwakilan tim pengembang | Belum ditentukan | Belum disetujui |
-| Perwakilan penguji | Belum ditentukan | Belum disetujui |
-
-> **Catatan:** Dokumen ini merupakan spesifikasi awal untuk proses elisitasi, analisis, dan validasi kebutuhan. Kebutuhan berstatus kandidat belum boleh dianggap sebagai keputusan final sebelum memperoleh konfirmasi dari stakeholder yang berwenang.
+| Peran | Nama | Jabatan / Pihak | Status Persetujuan | Tanggal |
+| :--- | :--- | :--- | :--- | :--- |
+| **PIC Donasi & Operasional** | *Endy Muhardin / Staf BMTZ* | Stakeholder Baitulmal Tazkia | Menunggu Walkthrough | TBD |
+| **Dosen Pembimbing / Penguji** | *Endy Muhardin* | STMIK Tazkia | Review Dosen | 04/11/2026 |
+| **Ketua Kelompok 6** | *Perwakilan Mahasiswa* | Tim Pengembangan Luring | Disetujui | 04/11/2026 |
+| **Arsitek Tim Pendamping** | *Tim Semester 5 (MISI.501)* | Tim Pendamping / Mentor | Review RC-1 | 04/11/2026 |
 
 ---
 
 ## 1. Pendahuluan
 
-### 1.1 Tujuan Dokumen
-Dokumen Software Requirements Specification (SRS) ini mendefinisikan kebutuhan awal perangkat lunak untuk Subsistem Penerimaan Donasi Luring Baitulmal Tazkia.
+### 1.1 Tujuan Dokumen (Purpose)
+Dokumen Software Requirements Specification (SRS) ini mendefinisikan secara menyeluruh kebutuhan fungsional dan nonfungsional dari **Subsistem Penerimaan Donasi Luring (Offline-First Donated Booth System)** Baitulmal Tazkia.
 
-Dokumen ini bertujuan untuk:
-1. Mendefinisikan ruang lingkup dan batasan subsistem.
-2. Mengidentifikasi kebutuhan fungsional dan nonfungsional.
-3. Menetapkan kebutuhan awal terkait pencatatan donasi dalam kondisi koneksi internet tidak stabil.
-4. Menjelaskan kebutuhan pengelolaan transaksi, sinkronisasi data, dan pelaporan penerimaan.
-5. Menjadi dasar perancangan, implementasi, pengujian, dan validasi bersama stakeholder.
-6. Menyediakan keterlacakan antara kebutuhan, sumber, dan metode verifikasi.
+Dokumen ini disusun untuk memenuhi sasaran pembaca berikut:
+1. **Dosen Penguji & Pembimbing (MISI.304 & MISI.305):** Sebagai bahan verifikasi kepatuhan terhadap standar ISO/IEC/IEEE 29148:2018 dan bukti pemenuhan CMMI Tingkat 3 (*Defined Process* pada *Process Area* Requirements Development/RD & Requirements Management/REQM).
+2. **Pengembang / Tim Konstruksi (MISI.302 & MISI.303):** Sebagai masukan teknis utama penyusunan *Class Diagram*, *Sequence Diagram*, skema database ORM, REST API Contract, dan penulisan kode unit pengujian.
+3. **Tim Pendamping Semester 5:** Sebagai acuan evaluasi arsitektur (*Review Checkpoint* RC-1 s.d. RC-6), integrasi platform deployment, dan audit keamanan.
+4. **Klien / PIC Baitulmal Tazkia:** Sebagai landasan komitmen formal (*sign-off*) lingkup aplikasi yang disepakati untuk dibangun.
 
-### 1.2 Ruang Lingkup Produk
-Subsistem Penerimaan Donasi Luring merupakan bagian dari sistem penerimaan donasi Baitulmal Tazkia yang digunakan dalam kegiatan pengumpulan donasi melalui booth di pusat perbelanjaan, masjid, dan lokasi acara.
+### 1.2 Ruang Lingkup Produk (Scope)
 
-Subsistem ini direncanakan untuk mendukung pencatatan donasi menggunakan perangkat yang koneksi internetnya tidak selalu tersedia, pengelolaan informasi transaksi, serta pengiriman data ke sistem pusat ketika koneksi tersedia.
+#### In-Scope (Di Dalam Lingkup Aplikasi):
+1. **Pencatatan Donasi Offline-First:** Pencatatan donasi tunai, QRIS, dan kartu (EDC manual) pada perangkat petugas booth tanpa bergantung pada koneksi internet konstan.
+2. **Sinkronisasi & Penanganan Antrean:** Antrean sinkronisasi data transaksi otomatis ke backend pusat saat jaringan pulih, dilengkapi *idempotency key* untuk mencegah data ganda.
+3. **Serah Terima Kas Berjenjang:** Pencatatan dan verifikasi serah terima uang tunai fisik secara bertahap dari Petugas Booth $\rightarrow$ Koordinator Lapangan $\rightarrow$ Bagian Keuangan Pusat beserta jejak audit selisih (*discrepancy log*).
+4. **Bukti Donasi Elektronik (e-Receipt):** Pemicu otomatis penerbitan bukti donasi via WhatsApp/SMS/Email bagi donatur yang memberikan nomor kontak valid.
+5. **Laporan Penutupan (Closing Report):** Rekapitulasi transaksi penerimaan booth per sesi operasional kasir dan per acara (*event*).
 
-Ruang lingkup awal mencakup:
-* Pencatatan donasi tunai, QRIS, dan kartu.
-* Penyimpanan transaksi ketika koneksi internet tidak tersedia.
-* Sinkronisasi transaksi ke sistem pusat ketika koneksi tersedia.
-* Penanganan potensi duplikasi transaksi.
-* Pencatatan serah-terima uang tunai beserta tahapan yang dapat ditelusuri.
-* Penyusunan rekap penerimaan berdasarkan sesi atau acara.
-* Dukungan pertukaran data dengan subsistem terkait melalui kontrak API yang disepakati.
+#### Out-of-Scope (Di Luar Lingkup Aplikasi):
+1. Perangkat keras EDC (Electronic Data Capture) fisik dan negosiasi kontrak dengan penyedia merchant kartu kredit/debit.
+2. Pencatatan jurnal umum akuntansi keuangan (dikelola oleh Subsistem Balaka / Keuangan).
+3. Pengelolaan kampanye penggalangan dana dan target program donasi (dikelola oleh Subsistem Manajemen Kampanye).
 
-*Detail teknis, aturan operasional, dan kewenangan pengguna masih perlu divalidasi.*
+#### Batas Sistem (System Boundary):
+Aplikasi berjalan di sisi perangkat petugas (*Web/PWA Client*) dengan *IndexedDB* lokal dan backend API mandiri. Setiap subsistem memiliki database dan *deployment* sendiri; komunikasi antarsubsistem **hanya melalui REST API Contract** tanpa ada *foreign key* lintas database.
 
-### 1.3 Tujuan Bisnis
+### 1.3 Tujuan Bisnis (Business Goals)
 
-| ID Tujuan | Tujuan Bisnis |
-| :--- | :--- |
-| **BG-01** | Mendukung pencatatan penerimaan donasi secara konsisten pada kegiatan booth luring. |
-| **BG-02** | Mengurangi risiko kehilangan dan duplikasi data transaksi. |
-| **BG-03** | Mendukung sinkronisasi data dari perangkat petugas ke sistem pusat. |
-| **BG-04** | Mendukung penelusuran tahapan serah-terima uang tunai. |
-| **BG-05** | Menyediakan rekap penerimaan donasi berdasarkan sesi atau acara. |
-| **BG-06** | Mendukung pertukaran data dengan subsistem terkait sesuai kontrak antarmuka yang disepakati. |
+| ID Tujuan | Tujuan Bisnis Utama | Metrik Keberhasilan Terukur |
+| :--- | :--- | :--- |
+| **BG-01** | Mendukung pencatatan donasi booth luring tanpa bergantung pada jaringan internet. | 100% donasi tetap tercatat di lokasi jaringan buruk (*zero data loss* lokal). |
+| **BG-02** | Mengeliminasi duplikasi data donasi akibat retry jaringan saat sinkronisasi. | 0% data ganda pada database pusat (*100% idempotency pass*). |
+| **BG-03** | Menyediakan jejak audit (*audit trail*) serah terima uang tunai yang akuntabel. | 100% transaksi tunai dapat ditelusuri penyerah, penerima, dan selisihnya. |
+| **BG-04** | Mempercepat waktu pencatatan donasi di lokasi acara yang ramai. | Durasi input 1 transaksi donasi tunai tanpa data donatur $< 5$ detik. |
+| **BG-05** | Menyediakan transparansi laporan penutupan kasir per sesi booth. | Laporan rekap penutupan sesi langsung tersedia begitu kasir ditutup. |
 
-### 1.4 Definisi dan Singkatan
+### 1.4 Definisi, Akronim, dan Singkatan
 
-| Istilah | Definisi |
+| Istilah / Akronim | Definisi Lengkap |
 | :--- | :--- |
 | **SRS** | *Software Requirements Specification*, dokumen spesifikasi kebutuhan perangkat lunak. |
-| **BMTZ** | Baitulmal Tazkia. |
-| **Booth** | Lokasi pengumpulan donasi pada kegiatan atau acara. |
-| **Sesi** | Periode operasional booth yang ditetapkan untuk pencatatan penerimaan. |
-| **Offline-first** | Pendekatan yang memungkinkan fungsi tertentu tetap berjalan ketika koneksi internet tidak tersedia. |
-| **Sinkronisasi** | Proses pertukaran data antara perangkat lokal dan sistem pusat. |
-| **API** | *Application Programming Interface*, antarmuka pertukaran data antarsistem. |
-| **QRIS** | *Quick Response Code Indonesian Standard*. |
-| **Audit trail** | Catatan aktivitas dan perubahan yang dapat digunakan untuk menelusuri suatu kejadian. |
-| **Stakeholder** | Pihak yang memiliki kepentingan atau kewenangan terhadap proses maupun sistem. |
-| **TBD** | *To Be Determined*, hal yang masih perlu ditentukan. |
-| **RTM** | *Requirements Traceability Matrix*, matriks keterlacakan kebutuhan. |
+| **BMTZ** | Baitulmal Tazkia, lembaga pengelola ZISWAF berbasis di Sentul, Bogor. |
+| **Offline-first** | Pola arsitektur di mana aplikasi mengutamakan penyimpanan data di lokal sebelum disinkronkan ke server. |
+| **IndexedDB** | Database NoSQL transaksional di dalam browser web untuk menyimpan data transaksi lokal. |
+| **UUID v7** | *Universally Unique Identifier* berbasis urutan waktu milidetik (*time-ordered UUID*) buatan client. |
+| **Idempotency Key** | Token unik (UUID) untuk menjamin permintaan API yang diulang tidak menghasilkan record ganda. |
+| **BPMN 2.0** | *Business Process Model and Notation* standar notasi pemodelan alur bisnis. |
+| **RTM** | *Requirements Traceability Matrix*, matriks penelusuran dua arah dari kebutuhan ke pengujian. |
+| **UU PDP** | Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi. |
+| **TBD** | *To Be Determined*, poin kebutuhan yang masih menunggu konfirmasi final dari elisitasi/walkthrough. |
 
 ### 1.5 Referensi
-1. Workbook Proyek Kelompok 6 — Booth Luring, Baitulmal Tazkia.
-2. ISO/IEC/IEEE 29148:2018 — *Systems and software engineering — Life cycle processes — Requirements engineering*.
-3. ISO/IEC 25010:2023 — *Systems and software Quality Requirements and Evaluation (SQuaRE) — Product quality model*.
-4. Kontrak API antarsubsistem BMTZ — *menunggu dokumen final*.
-5. Catatan hasil wawancara dan observasi stakeholder — *belum tersedia pada tahap penyusunan ini*.
+1. **ISO/IEC/IEEE 29148:2018:** *Systems and software engineering — Life cycle processes — Requirements engineering*.
+2. **ISO/IEC 25010:2023:** *Systems and software Quality Requirements and Evaluation (SQuaRE)*.
+3. **UU RI Nomor 27 Tahun 2022:** *Pelindungan Data Pribadi (UU PDP Indonesia)*.
+4. **Workbook Proyek Kelompok 6:** *Penerimaan Donasi Luring STMIK Tazkia Gasal 2026/2027*.
+5. **BPMN 2.0.2 Specification:** *Object Management Group (OMG) Business Process Model and Notation*.
 
 ---
 
-## 2. Deskripsi Umum
+## 2. Deskripsi Umum (General Description)
 
 ### 2.1 Perspektif Produk
-Subsistem Penerimaan Donasi Luring merupakan bagian dari ekosistem sistem BMTZ. Subsistem berinteraksi dengan petugas booth, data donasi, sistem pusat, layanan pembayaran, dan subsistem lain yang membutuhkan data penerimaan donasi.
+Subsistem Penerimaan Donasi Luring beroperasi sebagai aplikasi mandiri yang terhubung dalam ekosistem Baitulmal Tazkia secara terdistribusi.
 
-Gambaran konteks awal:
-* **Petugas booth:** mencatat transaksi penerimaan donasi.
-* **Sistem penerimaan donasi luring:** mengelola pencatatan lokal, status transaksi, dan sinkronisasi.
-* **Sistem pusat BMTZ:** menerima data transaksi yang disinkronkan sesuai kontrak API.
-* **Layanan pembayaran:** menyediakan informasi yang relevan untuk pembayaran digital sesuai integrasi yang disepakati.
-* **Subsistem rekonsiliasi dan settlement:** menggunakan data transaksi dan setoran yang relevan.
-* **Subsistem relawan dan operasional acara:** menyediakan informasi penugasan petugas per sesi sesuai kontrak integrasi.
+```
+ [ Petugas Booth / PWA Client ] 
+        │ (Offline Queue - IndexedDB)
+        ▼ (HTTPS REST API / JSON Payload)
+ [ Backend Subsistem Luring (Kelompok 6) ]
+        │
+        ├───► [ Payment Gateway (Artivisi) ] ------ (Kanal QRIS Dinamis/Statis)
+        ├───► [ Donasi & Akun Donatur ] ----------- (Identitas & Histori Donatur Pusat)
+        ├───► [ Relawan & Operasional Acara ] ----- (Penugasan Petugas & Sesi Booth)
+        └───► [ Rekonsiliasi & Settlement ] ------- (Sumber Data Audit Setoran Tunai/QRIS)
+```
 
-### 2.2 Diagram Proses Bisnis (BPMN / Swimlane Diagram)
+### 2.2 Diagram Proses Bisnis (BPMN 2.0)
 
-Berikut merupakan alur proses bisnis operasional pencatatan donasi luring, sinkronisasi data, dan serah-terima uang tunai dalam bentuk diagram Mermaid:
+#### 2.2.1 Diagram Alur Operasional (Mermaid Diagram)
 
 ```mermaid
 graph TB
-    %% Swimlane 1: Petugas Booth
-    subgraph Petugas_Booth[" Petugas Booth "]
+    subgraph Petugas_Booth[" Petugas Booth (Client App) "]
         A1([Mulai Sesi Booth]) --> A2[Terima Donasi dari Donatur]
         A2 --> A3{Pilih Metode Pembayaran}
         
-        A3 -- Tunai --> A4[Terima Uang Tunai & Input Transaksi]
-        A3 -- QRIS / Kartu --> A5[Tampilkan QRIS / Mesin EDC]
-        A5 --> A6[Terima Konfirmasi & Input Transaksi]
+        A3 -- Tunai --> A4[Terima Uang Tunai & Input Form]
+        A3 -- QRIS / Kartu --> A5[Tampilkan QRIS / Catat Referensi EDC]
+        A5 --> A6[Input Data Transaksi]
         
-        A4 --> A7{Cek Koneksi Internet}
+        A4 --> A7{Cek Jaringan Internet}
         A6 --> A7
         
-        A7 -- Offline --> A8[Simpan Transaksi di Penyimpanan Lokal]
-        A7 -- Online --> A9[Kirim Transaksi Langsung ke Pusat]
+        A7 -- Offline --> A8[Simpan ke IndexedDB Lokal + Generate UUID v7]
+        A7 -- Online --> A9[Kirim API Sync ke Backend Pusat]
         
-        A8 --> A10[Lanjutkan Transaksi Lainnya]
-        A10 --> A11[Koneksi Tersedia Kembali]
+        A8 --> A10[Tampilkan Status: Pending Sync]
+        A10 --> A11[Koneksi Terhubung Kembali]
         A11 --> A9
         
-        A12[Sesi Selesai: Hitung Total Fisik Tunai] --> A13[Serahkan Uang Tunai & Rekap Sesi ke Koordinator]
+        A12[Sesi Selesai: Hitung Kas Tunai Physical] --> A13[Serahkan Kas & Ajukan Handover]
     end
 
-    %% Swimlane 2: Subsistem Luring
-    subgraph Subsistem_Luring[" Subsistem Luring (Aplikasi Perangkat) "]
-        A8 -.-> B1[(Storage Lokal Perangkat)]
-        A9 --> B2[Validasi Structure Data & Buat Transaksi ID Unik]
-        B2 --> B3{Cek Duplikasi Data}
-        B3 -- Duplikat Detected --> B4[Batalkan / Tandai Redundant]
-        B3 -- Valid / Unik --> B5[Kirim API Payload ke Server Pusat]
-        B5 --> B6{Respons Server Pusat?}
-        B6 -- Gagal / Timeout --> B7[Tandai Status: Pending Sync / Queue]
-        B6 -- Sukses 200 OK --> B8[Tandai Status: Synced]
+    subgraph Subsistem_Luring[" Subsistem Backend Luring "]
+        A9 --> B1{Cek Idempotency Key}
+        B1 -- Key Sudah Ada --> B2[Kembalikan Data Lama 200 OK / Skip]
+        B1 -- Key Baru --> B3[Validasi Schema & Simpan ke DB Pusat]
+        B3 --> B4{Ada No WhatsApp?}
+        B4 -- Ya --> B5[Picu Push Notification / E-Receipt]
+        B4 -- Tidak --> B6[Update Status: SYNCED]
+        B5 --> B6
     end
 
-    subgraph Server_Pusat[" Server Pusat BMTZ "]
-        B5 .-> C1[Proses API Receiver BMTZ]
-        C1 --> C2[(Database Utama BMTZ)]
-        C2 .-> B6
-    end
-
-    %% Swimlane 3: Koordinator & Keuangan
-    subgraph Koordinator_Keuangan[" Koordinator & Bagian Keuangan "]
-        A13 --> D1[Terima Uang Tunai Fisik & Buka Menu Serah-Terima]
-        D1 --> D2{Verifikasi Total Fisik vs System Rekap}
-        D2 -- Sesuai / Balance --> D3[Konfirmasi & Simpan Catatan Serah-Terima]
-        D2 -- Terdapat Selisih --> D4[Input Catatan Selisih & Alasan]
-        D4 --> D3
-        D3 --> D5([Proses Sesi Selesai & Pembukuan])
+    subgraph Koordinator_Keuangan[" Koordinator & Keuangan "]
+        A13 --> C1[Terima Fisik Uang & Buka Menu Handover]
+        C1 --> C2{Hitung Kas Fisik vs Sistem}
+        C2 -- Fit / Match --> C3[Input PIN Otentikasi & Approve]
+        C2 -- Discrepancy --> C4[Input Wajib Catatan Alasan Selisih]
+        C4 --> C3
+        C3 --> C5([Sesi Booth Locked & Closed])
     end
 ```
 
-### 2.3 Kelas Pengguna dan Pemangku Kepentingan
+#### 2.2.2 Notasi Standar XML (AS-IS BPMN 2.0 XML)
+Berikut adalah representasi proses bisnis berjalan saat ini (*AS-IS*) dalam notasi XML BPMN 2.0 yang dapat dibuka pada tool `demo.bpmn.io`:
 
-| Pengguna / Pihak | Tanggung Jawab atau Kepentingan Awal | Status |
-| :--- | :--- | :--- |
-| **Petugas booth** | Mencatat penerimaan donasi pada kegiatan booth. | Kandidat; perlu validasi |
-| **Koordinator** | Terlibat dalam proses serah-terima uang tunai. | Kandidat; perlu validasi |
-| **Bagian keuangan** | Berkepentingan terhadap data setoran dan penerimaan. | Kandidat; perlu validasi |
-| **Administrator sistem** | Mengelola akses atau konfigurasi sistem jika diperlukan. | Peran dan kewenangan belum ditentukan |
-| **Pengelola operasional BMTZ** | Memvalidasi prosedur dan aturan bisnis. | Nama narasumber belum ditentukan |
-| **Tim pengembang** | Mengimplementasikan kebutuhan yang telah disepakati. | Tim proyek |
-| **Tim penguji** | Memverifikasi pemenuhan kebutuhan sistem. | Tim proyek |
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_DonasiLuring" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_01">
+    <bpmn:participant id="Participant_Baitulmal" name="Baitulmal Tazkia - Penerimaan Donasi Luring (AS-IS)" processRef="Process_ASIS_Donasi" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_ASIS_Donasi" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_01">
+      <bpmn:lane id="Lane_Petugas" name="Petugas Booth">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_TerimaUang</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CatatKertas</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SerahKoordinator</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Koordinator" name="Koordinator Lapangan">
+        <bpmn:flowNodeRef>Task_HitungFisik</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SerahKeuangan</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Keuangan" name="Bagian Keuangan">
+        <bpmn:flowNodeRef>Task_TerimaSetoran</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RekapManual</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1" name="Donatur Datang ke Booth">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_TerimaUang" name="Menerima Uang / QRIS Statis">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_CatatKertas" name="Mencatat Donasi pada Kertas / Form Nota">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_SerahKoordinator" name="Menyerahkan Fisik Uang ke Koordinator di Akhir Sesi">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_HitungFisik" name="Menghitung &amp; Rekap Total Uang Tunai">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_SerahKeuangan" name="Setor Kas ke Bagian Keuangan Pusat">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_TerimaSetoran" name="Memverifikasi Setoran Kas">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_RekapManual" name="Entry Ulang Data Form Kertas ke Spreadsheet">
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_1" name="Donasi Terbuka di Spreadsheet">
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_TerimaUang" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_TerimaUang" targetRef="Task_CatatKertas" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_CatatKertas" targetRef="Task_SerahKoordinator" />
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="Task_SerahKoordinator" targetRef="Task_HitungFisik" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_HitungFisik" targetRef="Task_SerahKeuangan" />
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_SerahKeuangan" targetRef="Task_TerimaSetoran" />
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_TerimaSetoran" targetRef="Task_RekapManual" />
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_RekapManual" targetRef="EndEvent_1" />
+  </bpmn:process>
+</bpmn:definitions>
+```
+
+### 2.3 Peran Pengguna dan Karakteristik (User Characteristics)
+
+| Peran Pengguna | Keahlian Teknis | Tanggung Jawab Utama | Akses Hak Sistem |
+| :--- | :--- | :--- | :--- |
+| **Petugas Booth (Relawan)** | General / Dasar (Pengguna Awam) | Mencatat transaksi donasi, menjaga fisik kas, menginisiasi penutupan sesi booth. | Mobile PWA (Input Donasi, View Offline Queue, Close Session Request). |
+| **Koordinator Lapangan** | Menengah | Mengawasi booth, menerima serah terima kas petugas, rekap per acara. | Mobile/Web (Approve Handover, Discrepancy Log, Event Summary). |
+| **Staf Keuangan Pusat** | Tinggi (Akuntan) | Memverifikasi setoran bank akhir dari koordinator, audit selisih kasir. | Web Admin (Finance Handover Approval & Audit Settlement). |
+| **System Administrator** | Sangat Tinggi (IT Ops) | Pengelolaan penugasan booth, konfigurasi API key, monitoring error log sync. | Portal Admin Full Access. |
 
 ### 2.4 Lingkungan Operasional
-* Kegiatan berlangsung pada booth di mal, masjid, dan lokasi acara.
-* Perangkat petugas dapat mengalami keterbatasan koneksi internet.
-* Pencatatan transaksi perlu mendukung kondisi koneksi tidak tersedia.
-* Data perlu dikirimkan ke sistem pusat ketika koneksi tersedia.
-* Jenis perangkat, sistem operasi, browser, spesifikasi minimum, serta kebijakan penyimpanan lokal belum ditentukan.
+1. **Perangkat Client:** Smartphone (Android/iOS) atau Tablet/Laptop petugas booth dengan browser modern (Google Chrome v100+, Safari v15+).
+2. **Kondisi Jaringan:** Mendukung kondisi koneksi *flaky* (3G/4G buruk) atau *totally offline* selama acara berlangsung.
+3. **Backend Server:** Node.js / Java Spring Boot containerized environment dengan PostgreSQL 15+ database Pusat.
 
-### 2.5 Batasan dan Ketergantungan
-1. Subsistem merupakan bagian dari proyek BMTZ dan harus mengikuti batas integrasi antarsubsistem.
-2. Pertukaran data antarsubsistem dilakukan melalui kontrak API yang disepakati.
-3. Struktur database internal tidak boleh mengasumsikan hubungan foreign key langsung melintasi batas subsistem.
-4. Integrasi pembayaran QRIS bergantung pada kontrak dan ketersediaan layanan pembayaran yang digunakan proyek.
-5. Struktur identitas donatur dan data transaksi harus mengikuti kontrak dengan subsistem terkait.
-6. Detail teknis penyimpanan lokal, pembuatan ID transaksi, dan penanganan konflik harus diputuskan pada tahap perancangan.
-7. Prosedur operasional yang belum diverifikasi tidak boleh dijadikan dasar implementasi final.
+### 2.5 Batasan dan Ketergantungan (Design Constraints)
+1. **Pola Offline-First Mandate:** Client wajib membangkitkan UUID v7 secara mandiri sebagai Primary Key sebelum data dikirim ke server.
+2. **Kepatuhan Data PDP (UU No. 27/2022):** Data pribadi donatur di IndexedDB lokal harus dienkripsi (AES-256-GCM) dan wajib dihapus segera setelah status sinkron `SYNCED`.
+3. **Zero Hardcoded Secrets:** Dilarang keras menyimpan password, token, atau secret key di dalam repository Git.
+4. **API Isolation:** Akses ke subsistem lain hanya diizinkan melalui HTTP REST API Contract.
 
-### 2.6 Asumsi dan Hal yang Belum Dipastikan
+### 2.6 Asumsi dan Ketergantungan (Assumptions & Dependencies)
 
-| ID | Pernyataan | Status |
+| ID | Pernyataan Asumsi / Ketergantungan | Status |
 | :--- | :--- | :--- |
-| **ASM-01** | Pencatatan transaksi perlu tetap tersedia ketika koneksi internet tidak tersedia. | Berdasarkan ruang lingkup workbook |
-| **ASM-02** | Data transaksi perlu disinkronkan ke sistem pusat ketika koneksi tersedia. | Berdasarkan ruang lingkup workbook |
-| **ASM-03** | Sistem memerlukan mekanisme untuk mengidentifikasi potensi transaksi duplikat. | Berdasarkan risiko pada workbook |
-| **ASM-04** | Setiap tahapan serah-terima uang tunai harus dapat ditelusuri. | Berdasarkan ruang lingkup workbook |
-| **ASM-05** | Donatur selalu harus memberikan nama, nomor telepon, atau alamat email. | Belum dikonfirmasi; tidak boleh diasumsikan |
-| **ASM-06** | Semua jenis pembayaran dapat diverifikasi secara otomatis. | Belum dikonfirmasi |
-| **ASM-07** | Transaksi yang telah dicatat boleh dikoreksi langsung oleh petugas. | Belum dikonfirmasi |
+| **DEP-01** | Kontrak API Donasi & Akun Donatur siap dikonsumsi untuk Sinkronisasi Donatur Pusat. | Dependency (Minggu 5) |
+| **DEP-02** | Payment Gateway Artivisi menyediakan endpoint validasi status QRIS. | Dependency |
+| **DEP-03** | Data penugasan petugas booth diambil dari Subsistem Relawan & Operasional Acara. | Dependency |
+| **ASM-01** | Perangkat petugas memiliki kapasitas memori lokal IndexedDB minimal 50MB. | Assumption Validated |
+| **ASM-02** | Petugas melakukan sinkronisasi data selambat-lambatnya 12 jam setelah acara selesai. | Operational Rule |
 
 ---
 
-## 3. Kebutuhan Fungsional
+## 3. Kebutuhan Spesifik (Specific Requirements)
 
-### 3.1 Pencatatan Donasi
+### 3.1 Antarmuka Eksternal (External Interfaces)
 
-#### FR-01 — Pencatatan Transaksi Donasi
-Sistem harus menyediakan fungsi untuk mencatat transaksi penerimaan donasi pada booth yang teridentifikasi.
-* **Kriteria verifikasi awal:**
-  * Transaksi dapat dimasukkan melalui antarmuka pencatatan.
-  * Transaksi yang memenuhi aturan validasi dapat disimpan.
-  * Transaksi yang tidak memenuhi aturan validasi tidak diproses sebagai transaksi valid.
-* **Status:** Kandidat.
+#### 3.1.1 Antarmuka Pengguna (UI Mockup Konseptual & Wireframe Layout)
 
-#### FR-02 — Informasi Transaksi
-Sistem harus menyimpan informasi transaksi yang diperlukan untuk identifikasi, penelusuran, dan pelaporan.
-* **Informasi kandidat meliputi:** Identitas unik transaksi, identitas booth dan sesi, tanggal dan waktu pencatatan, nominal donasi, metode pembayaran, status transaksi, dan status sinkronisasi.
-* **Status:** Kandidat; skema data perlu divalidasi.
+##### 1. Layar Form Donasi Offline (Petugas Booth PWA)
+```
++-------------------------------------------------------+
+|  [≡] Baitulmal Tazkia Luring         [QUEUE LOKAL: 3] |
++-------------------------------------------------------+
+| Sesi: Halal Fair - Booth 02 | Petugas: Ahmad Relawan  |
++-------------------------------------------------------+
+| FORM PENCATATAN DONASI LURING                         |
+|                                                       |
+| Nominal Donasi (Rp)*                                  |
+| [ Rp 100.000                                        ] |
+| Quick Choice:  [50k]  [100k]  [200k]  [500k]          |
+|                                                       |
+| Metode Pembayaran*                                    |
+| (•) TUNAI     ( ) QRIS     ( ) EDC / KARTU            |
+|                                                       |
+| Data Donatur (Opsional / UU PDP Minimization)         |
+| Nama Donatur                                          |
+| [ Hamba Allah / Bambang                           ] |
+| No. WhatsApp / HP (Untuk E-Receipt)                   |
+| [ 081234567890                                    ] |
+| Program Peruntukan                                    |
+| [ Infaq Ummat / Pendidikan / Disaster             ] |
+|                                                       |
+| STATUS JARINGAN: [🔴 TERPUTUS - DISIMPAN LOKAL]       |
+|                                                       |
+| [  BATAL  ]                   [  SIMPAN DONASI (Enter)] |
++-------------------------------------------------------+
+```
 
-#### FR-03 — Metode Pembayaran
-Sistem harus mendukung pencatatan metode pembayaran tunai, QRIS, dan kartu sesuai ruang lingkup proyek. Sistem harus membedakan pencatatan transaksi dari konfirmasi keberhasilan pembayaran apabila konfirmasi pembayaran tersedia melalui layanan terkait.
-* **Kriteria verifikasi awal:**
-  * Metode pembayaran yang diizinkan dapat dipilih.
-  * Metode yang tidak valid ditolak.
-  * Status pembayaran tidak otomatis dianggap berhasil hanya karena data transaksi tersimpan.
-* **Status:** Kandidat; aturan konfirmasi pembayaran perlu divalidasi.
+##### 2. Layar Dashboard Antrean Sinkronisasi (Offline Queue Status)
+```
++-------------------------------------------------------+
+| < Back  STATUS ANTREAN SINKRONISASI PUSAT             |
++-------------------------------------------------------+
+| Status Jaringan: [🟢 TERHUBUNG INTERNET]              |
+| Antrean Tertunda: 2 Transaksi                         |
+|                                                       |
+| [1] ID: 0192ab3c-4d5e (Rp 100.000 - Tunai)            |
+|     Waktu: 04/11/2026 10:15 | Status: [PENDING]       |
+| [2] ID: 0192ab3c-9f8e (Rp 50.000 - QRIS)              |
+|     Waktu: 04/11/2026 10:18 | Status: [FAILED - RETRY]|
+|                                                       |
+| [ 🔄 SINKRONKAN SEKARANG ]                            |
++-------------------------------------------------------+
+```
 
-### 3.2 Operasi Luring
+##### 3. Layar Berita Acara Serah Terima Kas (Handover Berjenjang)
+```
++-------------------------------------------------------+
+| SERAH TERIMA KAS BOOTH (BERITA ACARA DIGITAL)         |
++-------------------------------------------------------+
+| Penyerah (Petugas)  : Ahmad Relawan                   |
+| Penerima (Koord)    : Budi Koordinator                |
+| Sesi Booth          : Booth 02 - Sesi Pagi            |
+|                                                       |
+| Ringkasan Log Sistem:                                 |
+| - Total Kas Tunai Sistem (15 Tx) : Rp 1.500.000       |
+|                                                       |
+| Verifikasi Fisik Uang Tunai:                          |
+| Nominal Fisik Diterima (Rp)*                          |
+| [ Rp 1.500.000                                      ] |
+|                                                       |
+| Status Selisih Fisik vs Sistem : Rp 0 (MATCH 🟢)      |
+| Catatan Selisih (Wajib diisi jika selisih)            |
+| [ Tidak ada selisih                               ] |
+|                                                       |
+| PIN Konfirmasi Penerima (Koordinator)*                |
+| [ **** ]                                              |
+|                                                       |
+| [ PROSES & TANDATANGANI SERAH TERIMA DIGITAL ]        |
++-------------------------------------------------------+
+```
 
-#### FR-04 — Penyimpanan Lokal
-Sistem harus memungkinkan transaksi disimpan pada perangkat ketika koneksi internet tidak tersedia, sesuai kebijakan penyimpanan lokal yang ditetapkan.
-* **Kriteria verifikasi awal:**
-  * Transaksi yang memenuhi validasi dapat disimpan saat perangkat offline.
-  * Pengguna memperoleh informasi mengenai hasil penyimpanan.
-  * Data yang belum dikirim ke sistem pusat dapat dibedakan dari data yang telah tersinkron.
-* **Status:** Kandidat.
+#### 3.1.2 Antarmuka Antarsistem (API Contract Mapping)
 
-#### FR-05 — Status Sinkronisasi
-Sistem harus menyediakan status yang membedakan transaksi yang belum disinkronkan, sedang diproses, berhasil disinkronkan, atau mengalami kegagalan, sesuai rancangan yang disepakati.
-* **Kriteria verifikasi awal:** Status sesuai dengan hasil proses sinkronisasi, kegagalan sinkronisasi tidak ditampilkan sebagai keberhasilan, serta pengguna dapat mengetahui transaksi yang memerlukan penanganan lebih lanjut.
-* **Status:** Kandidat.
-
-#### FR-06 — Sinkronisasi Transaksi
-Sistem harus mengirimkan transaksi lokal yang memenuhi ketentuan sinkronisasi ke sistem pusat ketika koneksi tersedia.
-* **Kriteria verifikasi awal:**
-  * Transaksi yang memenuhi syarat masuk ke proses sinkronisasi.
-  * Respons sistem pusat dicatat sesuai kontrak API.
-  * Transaksi yang gagal dikirim tetap dapat diidentifikasi untuk penanganan berikutnya.
-* **Status:** Kandidat; kontrak API dan aturan pengiriman ulang belum ditetapkan.
-
-#### FR-07 — Penanganan Transaksi Duplikat
-Sistem harus mendukung identifikasi dan penanganan potensi duplikasi transaksi selama pencatatan atau sinkronisasi.
-* **Kriteria verifikasi awal:**
-  * Pengiriman ulang transaksi yang sama dapat dikenali berdasarkan identitas dan aturan deduplikasi yang disepakati.
-  * Sistem tidak menghasilkan transaksi tambahan hanya akibat pengiriman ulang yang sama apabila mekanisme idempotensi telah ditetapkan.
-  * Konflik yang tidak dapat diputuskan secara otomatis dicatat untuk penanganan lebih lanjut.
-* **Status:** Kandidat; strategi deduplikasi dan resolusi konflik perlu dirancang.
-
-### 3.3 Serah-Terima Uang Tunai
-
-#### FR-08 — Pencatatan Serah-Terima
-Sistem harus mendukung pencatatan serah-terima uang tunai dari petugas kepada koordinator dan tahapan selanjutnya sesuai prosedur BMTZ yang telah divalidasi.
-* **Informasi kandidat meliputi:** Referensi sesi atau acara, pihak yang menyerahkan, pihak yang menerima, nominal uang tunai, waktu serah-terima, status pemeriksaan/konfirmasi, dan catatan selisih jika ditemukan.
-* **Status:** Kandidat; alur dan pihak yang berwenang perlu divalidasi.
-
-#### FR-09 — Penelusuran Tahapan Serah-Terima
-Sistem harus menyediakan informasi yang dapat digunakan untuk menelusuri tahapan serah-terima uang tunai sesuai prosedur yang disepakati.
-* **Status:** Kandidat.
-
-### 3.4 Pelaporan dan Pencarian
-
-#### FR-10 — Rekap Penerimaan
-Sistem harus menyediakan rekap penerimaan donasi berdasarkan sesi booth atau rentang waktu yang dipilih.
-* **Status:** Kandidat; aturan perhitungan perlu divalidasi.
-
-#### FR-11 — Rincian Metode Pembayaran
-Sistem harus mendukung penyajikan rincian penerimaan berdasarkan metode pembayaran yang disepakati.
-* **Status:** Kandidat.
-
-#### FR-12 — Pencarian Transaksi
-Sistem harus menyediakan fungsi pencarian transaksi berdasarkan kriteria yang disetujui (misal: ID transaksi, sesi, tanggal, atau metode pembayaran).
-* **Status:** Kandidat; daftar filter perlu divalidasi.
-
-#### FR-13 — Penutupan Sesi atau Acara
-Sistem harus mendukung penyusunan rekap penutupan penerimaan per sesi atau acara. Aturan penutupan harus memperhatikan transaksi yang belum tersinkron dan status pembayaran sesuai kebijakan yang disepakati.
-* **Status:** Kandidat; prosedur penutupan perlu divalidasi.
-
-### 3.5 Akses dan Pengelolaan Data
-
-#### FR-14 — Pengendalian Akses
-Sistem harus membatasi akses terhadap fungsi dan data sesuai peran pengguna yang telah disetujui.
-* **Status:** Kandidat; matriks hak akses belum ditetapkan.
-
-#### FR-15 — Koreksi dan Pembatalan Transaksi
-Apabila koreksi atau pembatalan transaksi diizinkan, sistem harus menerapkannya sesuai kewenangan dan prosedur yang disetujui serta menjaga keterlacakan perubahan (*audit trail*).
-* **Status:** Kandidat; kewenangan koreksi dan pembatalan belum dikonfirmasi.
-
-#### FR-16 — Pertukaran Data dengan Sistem Terkait
-Sistem harus menyediakan pertukaran data melalui kontrak API yang disepakati dengan sistem pusat dan subsistem terkait.
-* **Status:** Kandidat; kontrak API final belum tersedia.
+| ID Antarmuka | Sistem Terhubung | Arah Data | Format Payload | Timeout | Mekanisme Retry |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **IF-01** | Sub-Sistem Donatur Pusat | Outbound | JSON / REST API | 3000ms | Exponential Backoff (3x) |
+| **IF-02** | Artivisi QRIS Engine | Inbound/Outbound | JSON / Webhook | 5000ms | Auto Callback Handler |
+| **IF-03** | Sub-Sistem Relawan | Inbound | JSON / REST API | 2000ms | Cache Local 24 Jam |
+| **IF-04** | Sub-Sistem Rekonsiliasi | Outbound | JSON Batch API | 10000ms | Manual Retry Log |
 
 ---
 
-## 4. Kebutuhan Antarmuka Eksternal
+### 3.2 Kebutuhan Fungsional (Functional Requirements)
 
-### 4.1 Antarmuka Pengguna
-
-| ID | Kebutuhan Antarmuka Pengguna |
-| :--- | :--- |
-| **UI-01** | Antarmuka pencatatan harus menampilkan label dan informasi input yang jelas. |
-| **UI-02** | Sistem harus memberikan umpan balik terhadap input yang tidak valid. |
-| **UI-03** | Status penyimpanan lokal dan sinkronisasi harus dapat dibedakan. |
-| **UI-04** | Pesan kegagalan harus membantu pengguna memahami tindakan berikutnya tanpa menampilkan informasi sensitif. |
-| **UI-05** | Antarmuka web harus dapat digunakan pada perangkat lapangan yang didukung. |
-| **UI-06** | Validasi input harus diterapkan pada sisi server, tidak hanya pada sisi antarmuka pengguna. |
-
-### 4.2 Antarmuka Perangkat Keras
-Jenis perangkat, sistem operasi, serta kebutuhan printer, pemindai, kamera, atau perangkat pembayaran belum ditentukan. Tidak ada ketergantungan terhadap perangkat keras tertentu yang ditetapkan dalam dokumen ini.
-
-### 4.3 Antarmuka Perangkat Lunak
-
-| ID | Sistem / Layanan | Kebutuhan Antarmuka |
-| :--- | :--- | :--- |
-| **IF-01** | Sistem pusat BMTZ | Pertukaran data transaksi dan identitas sesuai kontrak API. |
-| **IF-02** | Layanan pembayaran QRIS | Pertukaran informasi pembayaran sesuai integrasi dan kontrak yang berlaku. |
-| **IF-03** | Subsistem Rekonsiliasi & Settlement | Penyediaan data transaksi dan informasi setoran yang relevan. |
-| **IF-04** | Subsistem Relawan & Operasional Acara | Penggunaan informasi penugasan petugas per sesi sesuai kontrak API. |
-| **IF-05** | Sistem / Penyimpanan lokal | Penyimpanan transaksi saat offline dan pengelolaan antrean sinkronisasi sesuai rancangan. |
-
-### 4.4 Antarmuka Komunikasi
-Sistem perlu mendukung pertukaran data dengan sistem pusat melalui mekanisme komunikasi yang disepakati. Protokol, format pesan, batas waktu respons, serta mekanisme autentikasi belum ditetapkan dalam SRS versi ini.
-
----
-
-## 5. Kebutuhan Data
-
-### 5.1 Entitas Data Awal
-
-| Entitas | Deskripsi | Atribut Kandidat |
-| :--- | :--- | :--- |
-| **Transaksi Donasi** | Catatan penerimaan donasi. | ID transaksi, nominal, waktu pencatatan, metode pembayaran, status. |
-| **Booth** | Lokasi pengumpulan donasi. | ID booth, nama atau identitas lokasi. |
-| **Sesi Acara** | Periode operasional booth. | ID sesi, referensi acara, waktu mulai dan selesai. |
-| **Pengguna / Petugas** | Pihak yang menggunakan sistem. | ID pengguna, identitas peran sesuai kebijakan. |
-| **Status Sinkronisasi** | Informasi hasil pertukaran data. | Status, waktu percobaan, waktu berhasil, informasi kegagalan. |
-| **Serah-Terima Tunai** | Catatan perpindahan uang tunai. | ID catatan, pihak penyerah, pihak penerima, nominal, waktu, status. |
-| **Catatan Aktivitas** | Catatan tindakan (*audit log*). | Pelaku, tindakan, waktu, referensi data terkait. |
-
-### 5.2 Validasi Data
-* Nominal donasi harus mengikuti aturan format dan nilai yang disepakati.
-* Metode pembayaran harus berasal dari pilihan yang diizinkan.
-* Transaksi harus memiliki identitas yang dapat digunakan untuk penelusuran.
-* Referensi booth dan sesi harus mengikuti sumber data yang sah.
-* Data yang dikirimkan ke sistem lain harus mengikuti kontrak API.
-* Data tidak valid harus ditolak atau ditangani sesuai aturan validasi yang disepakati.
-
-### 5.3 Integritas dan Konsistensi Data
-Sistem harus mendukung konsistensi data selama pencatatan dan sinkronisasi. Strategi identitas unik, deduplikasi, resolusi konflik, dan pemulihan transaksi perlu ditetapkan melalui keputusan arsitektur.
-
-### 5.4 Privasi dan Retensi
-Pengumpulan data donatur harus dibatasi pada kebutuhan operasional yang disetujui. Hak akses, tujuan penggunaan, masa retensi, penghapusan, pencadangan, dan penanganan insiden perlu mengikuti kebijakan BMTZ serta ketentuan hukum yang berlaku.
-
----
-
-## 6. Kebutuhan Nonfungsional
-
-### 6.1 Keamanan
-
-| ID | Kebutuhan | Verifikasi |
-| :--- | :--- | :--- |
-| **NFR-01** | Sistem harus membatasi akses terhadap fungsi dan data berdasarkan hak pengguna yang disetujui. | Pengujian akses positif dan negatif. |
-| **NFR-02** | Pertukaran data melalui jaringan harus menggunakan mekanisme perlindungan yang disepakati. | Pemeriksaan konfigurasi komunikasi dan pengujian keamanan. |
-| **NFR-03** | Data lokal yang belum tersinkron harus dilindungi sesuai risiko dan kebijakan organisasi. | Pemeriksaan mekanisme penyimpanan dan kontrol perangkat. |
-| **NFR-04** | Informasi sensitif tidak boleh ditampilkan pada pesan kesalahan yang ditujukan kepada pengguna. | Pengujian pesan kesalahan. |
-
-### 6.2 Keandalan dan Pemulihan
-
-| ID | Kebutuhan | Verifikasi |
-| :--- | :--- | :--- |
-| **NFR-05** | Kegagalan koneksi tidak boleh menyebabkan transaksi lokal yang telah berhasil disimpan dilaporkan sebagai berhasil tersinkron. | Simulasi putus koneksi. |
-| **NFR-06** | Sistem harus dapat mengidentifikasi transaksi yang gagal disinkronkan. | Pengujian kegagalan pengiriman. |
-| **NFR-07** | Pengiriman ulang transaksi harus mengikuti mekanisme pencegahan duplikasi yang disepakati. | Pengujian pengiriman ulang. |
-| **NFR-08** | Mekanisme pemulihan data harus ditetapkan sesuai risiko kehilangan atau kerusakan perangkat. | Uji pemulihan berdasarkan prosedur yang disetujui. |
-
-### 6.3 Kinerja
-
-| ID | Kebutuhan | Target |
-| :--- | :--- | :--- |
-| **NFR-09** | Waktu respons pencatatan transaksi harus memenuhi kebutuhan operasional booth. | TBD |
-| **NFR-10** | Waktu pemrosesan sinkronisasi harus memenuhi kebutuhan operasional. | TBD |
-| **NFR-11** | Sistem harus mampu menangani volume transaksi sesuai skala kegiatan yang disepakati. | TBD |
-
-### 6.4 Usabilitas dan Kompatibilitas
-
-| ID | Kebutuhan | Verifikasi |
-| :--- | :--- | :--- |
-| **NFR-12** | Antarmuka harus memberikan umpan balik yang dapat dipahami pengguna ketika terjadi kesalahan. | Pengujian penerimaan pengguna. |
-| **NFR-13** | Antarmuka web harus dapat digunakan pada ukuran layar perangkat yang didukung. | Pengujian pada perangkat / ukuran layar yang disepakati. |
-| **NFR-14** | Sistem harus kompatibel dengan lingkungan perangkat lunak yang telah ditetapkan. | Pengujian pada lingkungan target. |
-
-### 6.5 Kemudahan Pemeliharaan dan Pengujian
-
-| ID | Kebutuhan | Verifikasi |
-| :--- | :--- | :--- |
-| **NFR-15** | Kode dan konfigurasi harus dipisahkan sehingga perubahan konfigurasi tidak memerlukan perubahan logika program yang tidak relevan. | Inspeksi struktur implementasi. |
-| **NFR-16** | Komponen yang bergantung pada layanan eksternal harus dapat diuji melalui mekanisme pengujian yang sesuai. | Pengujian terisolasi dan integrasi. |
-| **NFR-17** | Validasi penting harus dilakukan pada sisi server agar tidak dapat dilewati hanya dengan melewati antarmuka pengguna. | Pengujian API secara langsung. |
-
----
-
-## 7. Aturan Bisnis dan Penanganan Pengecualian
-
-### 7.1 Aturan Bisnis Kandidat
-
-| ID | Aturan Bisnis | Hal yang Perlu Dikonfirmasi |
-| :--- | :--- | :--- |
-| **BR-01** | Transaksi harus terhubung dengan booth atau sesi yang valid sesuai kebijakan. | Apakah transaksi dapat dibuat di luar sesi aktif? |
-| **BR-02** | Data yang tersimpan tidak otomatis berarti pembayaran telah berhasil. | Bagaimana verifikasi untuk tunai, QRIS, dan kartu? |
-| **BR-03** | Transaksi yang belum tersinkron harus dibedakan dari transaksi yang telah diterima sistem pusat. | Bagaimana status ditampilkan dan dipulihkan? |
-| **BR-04** | Penanganan transaksi duplikat harus mengikuti aturan identitas dan deduplikasi yang disepakati. | Apa kunci unik dan prosedur resolusi konflik? |
-| **BR-05** | Koreksi atau pembatalan transaksi harus mengikuti kewenangan yang ditetapkan. | Siapa yang berwenang dan apakah perlu persetujuan? |
-| **BR-06** | Rekap penerimaan harus mengikuti filter dan aturan perhitungan yang konsisten. | Status transaksi apa yang dihitung dalam laporan? |
-| **BR-07** | Selisih uang tunai harus dapat dicatat apabila prosedur serah-terima mengharuskannya. | Bagaimana selisih ditangani dan disetujui? |
-| **BR-08** | Penutupan sesi harus mengikuti aturan transaksi yang masih tertunda. | Apakah penutupan sementara diperbolehkan? |
-
-### 7.2 Skenario Pengecualian
-1. Koneksi terputus sebelum transaksi disimpan.
-2. Koneksi terputus setelah transaksi tersimpan secara lokal.
-3. Sistem pusat menerima transaksi tetapi respons tidak diterima perangkat.
-4. Transaksi yang sama dikirim ulang akibat timeout.
-5. Pembayaran digital belum terkonfirmasi.
-6. Pengguna memasukkan nominal atau metode pembayaran yang tidak valid.
-7. Sesi akan ditutup ketika masih ada transaksi yang belum tersinkron.
-8. Terjadi selisih antara nominal tercatat dan uang tunai fisik.
-9. Perangkat hilang atau rusak sebelum transaksi lokal tersinkron.
-10. Dua petugas berpotensi mencatat transaksi yang sama.
-11. Jam perangkat tidak sesuai dengan waktu sebenarnya.
-12. Pengguna mencoba melakukan koreksi tanpa kewenangan.
-
----
-
-## 8. Kriteria Penerimaan dan Verifikasi
-
-### 8.1 Prinsip Verifikasi
-Setiap kebutuhan yang telah disetujui harus dapat diverifikasi dengan metode yang sesuai (Pengujian, Inspeksi, Analisis, atau Demonstrasi).
-
-### 8.2 Skenario Verifikasi Awal
-
-| ID Uji | Kebutuhan | Kondisi dan Tindakan | Hasil yang Diharapkan |
-| :--- | :--- | :--- | :--- |
-| **TC-01** | FR-01 | Pengguna memasukkan transaksi dengan data valid. | Transaksi dapat disimpan sesuai aturan. |
-| **TC-02** | FR-01 | Pengguna memasukkan transaksi dengan data wajib yang tidak valid. | Sistem menolak input dan memberikan umpan balik. |
-| **TC-03** | FR-04 | Perangkat berada dalam kondisi offline dan pengguna menyimpan transaksi valid. | Transaksi tersimpan lokal dan statusnya dapat diketahui. |
-| **TC-04** | FR-05 | Transaksi belum dikirim ke sistem pusat. | Sistem tidak menampilkan transaksi sebagai telah tersinkron. |
-| **TC-05** | FR-06 | Koneksi tersedia dan transaksi memenuhi syarat sinkronisasi. | Transaksi dikirim sesuai kontrak API dan hasilnya dicatat. |
-| **TC-06** | FR-07 | Transaksi yang sama dikirim ulang. | Penanganan mengikuti aturan deduplikasi yang disepakati. |
-| **TC-07** | FR-08 | Pengguna mencatat serah-terima tunai yang valid. | Catatan serah-terima tersimpan dan dapat ditelusuri. |
-| **TC-08** | FR-10 | Pengguna meminta rekap berdasarkan sesi tertentu. | Rekap sesuai dengan transaksi yang memenuhi filter. |
-| **TC-09** | FR-14 | Pengguna tanpa hak mengakses fungsi terbatas. | Sistem menolak akses. |
-| **TC-10** | FR-16 | Permintaan API tidak memenuhi kontrak. | Sistem menangani kesalahan sesuai kontrak API. |
-| **TC-11** | NFR-17 | Permintaan tidak valid dikirim langsung ke API tanpa melalui antarmuka. | Server tetap menerapkan validasi. |
-| **TC-12** | FR-13 | Sesi ditutup ketika masih ada transaksi yang belum tersinkron. | Sistem mengikuti kebijakan penutupan yang disetujui. |
-
-### 8.3 Kriteria Persetujuan
-SRS dapat ditetapkan sebagai baseline apabila seluruh kebutuhan memiliki ID unik, dapat ditelusuri, telah ditinjau stakeholder, tidak memiliki ambiguitas, dan ketergantungan antar-subsistem terdefinisi dengan jelas.
-
----
-
-## 9. Matriks Keterlacakan Awal (RTM)
-
-| ID Kebutuhan | Tujuan Bisnis | Sumber Awal | Verifikasi Awal | Status |
+| Requirement ID | Deskripsi Kebutuhan Fungsional | Prioritas | User Story Ref | Acceptance Criteria (Given-When-Then) |
 | :--- | :--- | :--- | :--- | :--- |
-| **FR-01** | BG-01 | Workbook proyek | TC-01, TC-02 | Kandidat |
-| **FR-02** | BG-01, BG-02 | Workbook & Analisis Awal | Inspeksi data & Pengujian | Kandidat |
-| **FR-03** | BG-01 | Workbook proyek | Pengujian metode pembayaran | Kandidat |
-| **FR-04** | BG-01, BG-02 | Workbook proyek | TC-03 | Kandidat |
-| **FR-05** | BG-02, BG-03 | Workbook proyek | TC-04 | Kandidat |
-| **FR-06** | BG-03 | Workbook proyek | TC-05 | Kandidat |
-| **FR-07** | BG-02 | Risiko workbook | TC-06 | Kandidat |
-| **FR-08** | BG-04 | Workbook proyek | TC-07 | Kandidat |
-| **FR-09** | BG-04 | Workbook proyek | Inspeksi & Pengujian | Kandidat |
-| **FR-10** | BG-05 | Workbook proyek | TC-08 | Kandidat |
-| **FR-11** | BG-05 | Analisis Awal | Pengujian konsistensi | Kandidat |
-| **FR-12** | BG-01, BG-05 | Analisis Awal | Pengujian pencarian | Kandidat |
-| **FR-13** | BG-05 | Workbook proyek | TC-12 | Kandidat |
-| **FR-14** | BG-01, BG-04 | Analisis Awal | TC-09 | Kandidat |
-| **FR-15** | BG-02, BG-04 | Risiko workbook | Pengujian audit trail | Kandidat |
-| **FR-16** | BG-03, BG-06 | Workbook proyek | TC-10 | Kandidat |
-| **NFR-01–04** | BG-02, BG-04 | Analisis Kualitas/Risiko | Pengujian keamanan | Kandidat |
-| **NFR-05–08** | BG-02, BG-03 | Risiko workbook | Uji keandalan/pemulihan | Kandidat |
-| **NFR-09–11** | BG-01, BG-03 | Kebutuhan Kualitas | Pengujian kinerja | TBD |
-| **NFR-12–17** | BG-01, BG-06 | Analisis Kualitas/Konteks | Pengujian & Inspeksi | Kandidat |
+| **FR-001** | Sistem harus dapat mencatat transaksi donasi saat perangkat dalam kondisi luring (*offline*). | **Must Have** | Petugas Booth | **Given** perangkat tidak terhubung internet, **When** petugas menekan "Simpan Donasi", **Then** data tersimpan di IndexedDB lokal dengan UUID v7 & status `PENDING`. |
+| **FR-002** | Sistem harus menyinkronkan otomatis antrean luring ke server pusat saat koneksi pulih. | **Must Have** | Sistem | **Given** antrean luring > 0 & jaringan pulih, **When** background sync running, **Then** data terkirim ke backend & status lokal berubah jadi `SYNCED`. |
+| **FR-003** | Backend harus menolak duplikasi data donasi akibat retry jaringan terkirim ganda (*Idempotency*). | **Must Have** | Backend Eng | **Given** backend menerima payload dengan `idempotency_key` yang sudah terdaftar, **When** diproses, **Then** backend mengembalikan HTTP 200 dengan data transaksi awal tanpa membuat data baru. |
+| **FR-004** | Sistem harus mencatat serah terima kas berjenjang (Petugas $\rightarrow$ Koord $\rightarrow$ Keuangan) beserta audit selisih. | **Must Have** | Koordinator & Keuangan | **Given** sesi booth ditutup, **When** Koordinator input nominal kas fisik & PIN otentikasi, **Then** sistem menghitung selisih kas fisik vs sistem & mengunci sesi. |
+| **FR-005** | Sistem harus memicu penerbitan Bukti Donasi Elektronik (e-Receipt) WhatsApp jika nomor kontak terisi. | **Should Have** | Donatur | **Given** transaksi status `SYNCED` & nomor WA terisi, **When** sync selesai, **Then** sistem memanggil API Notification Gateway untuk mengirim e-receipt. |
+| **FR-006** | Sistem harus menyajikan Laporan Penutupan Booth (*Closing Report*) per sesi kasir & per event. | **Must Have** | Admin Booth | **Given** sesi booth ditutup, **When** laporan dibuka, **Then** sistem menampilkan total tunai, QRIS, EDC, total selisih, dan rincian transaksi. |
 
 ---
 
-## 10. Isu Terbuka dan Validasi
+### 3.3 Kebutuhan Usabilitas (Usability Requirements)
 
-| ID | Isu yang Perlu Digali | Bukti atau Keputusan yang Dibutuhkan |
+* **NFR-USE-01 (Input Speed):** Pencatatan donasi tunai tanpa data donatur harus dapat diselesaikan dalam maksimal 3 kali ketukan / $< 5$ detik.
+* **NFR-USE-02 (Persistent Network Status):** Indikator koneksi (Online/Offline) dan jumlah antrean lokal yang belum tersinkron wajib tampil persisten di bar atas aplikasi.
+* **NFR-USE-03 (Contextual Error Messages):** Form input wajib menampilkan pesan validasi kontekstual yang jelas (misal: "Nominal minimum donasi adalah Rp 1.000").
+
+---
+
+### 3.4 Kebutuhan Kinerja (Performance Requirements)
+
+* **NFR-PER-01 (Local Write Speed):** Waktu simpan transaksi donasi ke IndexedDB lokal client $< 100\text{ ms}$.
+* **NFR-PER-02 (Offline Storage Capacity):** Storage lokal browser sanggup menyimpan minimal **5.000 transaksi luring** tanpa *crash*.
+* **NFR-PER-03 (Batch Sync Throughput):** Backend sanggup memproses **100 transaksi luring per detik** saat proses sinkronisasi masal serentak.
+* **NFR-PER-04 (API Latency):** Latensi respons backend untuk transaksi single $< 500\text{ ms}$ pada persentil 95 (P95).
+
+---
+
+### 3.5 Kamus Data & Validasi (Logical Database Requirements)
+
+#### 1. Entitas: `donations` (Transaksi Donasi Luring)
+
+| Field Name | Tipe Data | Constraint / Keys | Nullable | Validasi & Rule Bisnis | Deskripsi |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `donation_id` | `UUID` | Primary Key | No | Standard UUID v7 (Time-ordered ID) | ID unik transaksi (dibuat di client luring). |
+| `booth_session_id` | `UUID` | Foreign Key | No | Must exist in `booth_sessions` | ID Sesi Booth tempat donasi dicatat. |
+| `amount` | `DECIMAL(18,2)` | Column | No | Min: $1.000,00$, Max: $100.000.000,00$ | Nominal donasi rupiah. |
+| `payment_method` | `VARCHAR(20)` | Enum | No | Values: `CASH`, `QRIS`, `CARD_EDC` | Metode pembayaran yang dipilih. |
+| `donor_name` | `VARCHAR(150)` | Column | Yes | Default: 'Hamba Allah'. Sanitasi HTML. | Nama donatur. |
+| `donor_contact` | `VARCHAR(30)` | Column | Yes | Format E.164 (misal: `+6281234567890`) | No. WhatsApp/HP untuk e-receipt. |
+| `external_reference` | `VARCHAR(100)` | Index | Yes | Mandatory if `payment_method` IN (`QRIS`, `CARD_EDC`) | ID Referensi transaksi bank / PG. |
+| `sync_status` | `VARCHAR(20)` | Enum | No | Values: `PENDING`, `SYNCED`, `CONFLICT`, `FAILED` | Status sinkronisasi data ke server pusat. |
+| `recorded_at_client` | `TIMESTAMPTZ` | Column | No | Past or Present timestamp | Waktu transaksi dicatat di HP petugas. |
+| `synced_at_server` | `TIMESTAMPTZ` | Column | Yes | Filled on backend sync process | Waktu data sukses masuk DB pusat. |
+
+#### 2. Entitas: `cash_handovers` (Serah Terima Kas Berjenjang)
+
+| Field Name | Tipe Data | Constraint / Keys | Nullable | Validasi & Rule Bisnis | Deskripsi |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `handover_id` | `UUID` | Primary Key | No | Standard UUID v7 | ID Unik berita acara serah terima. |
+| `booth_session_id` | `UUID` | Foreign Key | No | Must exist in `booth_sessions` | Sesi booth yang diserahterimakan. |
+| `handover_stage` | `VARCHAR(30)` | Enum | No | Values: `OFFICER_TO_COORD`, `COORD_TO_FINANCE` | Tahap serah terima berjenjang. |
+| `from_user_id` | `UUID` | Foreign Key | No | User ID penyerah | ID Petugas / Koordinator penyerah. |
+| `to_user_id` | `UUID` | Foreign Key | No | User ID penerima | ID Koordinator / Keuangan penerima. |
+| `system_calculated_amount` | `DECIMAL(18,2)`| Column | No | Total sum of `CASH` donations in session | Total kas menurut catatan log sistem. |
+| `physical_cash_amount` | `DECIMAL(18,2)`| Column | No | Min value: $0,00$ | Total kas tunai fisik yang dihitung. |
+| `discrepancy_amount` | `DECIMAL(18,2)`| Column | No | Formula: `physical_cash_amount` - `system_calculated_amount` | Nilai selisih kas fisik vs sistem. |
+| `discrepancy_reason` | `TEXT` | Column | Yes | Mandatory if `discrepancy_amount` $\neq 0$ | Alasan/catatan penjelas selisih. |
+| `confirmation_pin_hash` | `VARCHAR(255)`| Column | No | Hash PIN otentikasi penerima | Bukti otentikasi penerima. |
+| `created_at` | `TIMESTAMPTZ` | Column | No | Default `NOW()` | Waktu berita acara dibuat. |
+
+#### 3. Entitas: `booth_sessions` (Sesi Operasional Booth)
+
+| Field Name | Tipe Data | Constraint / Keys | Nullable | Validasi & Rule Bisnis | Deskripsi |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `session_id` | `UUID` | Primary Key | No | Standard UUID v7 | ID unik sesi booth. |
+| `booth_name` | `VARCHAR(100)` | Column | No | Contoh: "Booth 01 - Halal Fair" | Nama lokasi/booth. |
+| `assigned_officer_id` | `UUID` | Foreign Key | No | ID User Petugas | Petugas operasional utama. |
+| `opened_at` | `TIMESTAMPTZ` | Column | No | Timestamp | Waktu pembukaan kasir/booth. |
+| `closed_at` | `TIMESTAMPTZ` | Column | Yes | Must be $\ge$ `opened_at` | Waktu penutupan sesi booth. |
+| `session_status` | `VARCHAR(20)` | Enum | No | Values: `OPEN`, `CLOSED`, `RECONCILED` | Status siklus sesi booth. |
+
+---
+
+### 3.6 Standard Kepatuhan PDP & Keamanan (Attributes)
+
+* **3.6.1 Data Protection (UU PDP No. 27/2022):** Kontak donatur bersifat opsional. Data lokal di IndexedDB dienkripsi dengan AES-256-GCM dan dibersihkan otomatis begitu status transaksi `SYNCED`.
+* **3.6.2 Security in Transit & Rest:** Seluruh API menggunakan HTTPS / TLS 1.3. Password dan PIN di-hash menggunakan Argon2id atau BCrypt (cost factor $\ge 10$).
+* **3.6.3 Reliability & Zero Loss:** Kegagalan koneksi saat sync berlangsung tidak boleh merusak data lokal; sistem akan melakukan rollback ke status `PENDING` untuk dicoba ulang.
+
+---
+
+## 4. Matriks Keterlacakan Kebutuhan (RTM - Requirements Traceability Matrix)
+
+| Req ID | Deskripsi Kebutuhan | Metode Verifikasi | Modul / Class Terkait | Rujukan BPMN Task ID | Test Case Ref |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **FR-001** | Pencatatan Offline | Test / Demo | `DonationService.saveOffline()` | `Task_CatatKertas` | `TC-OFF-01` |
+| **FR-002** | Auto Sinkronisasi | Integration Test | `SyncWorker.processQueue()` | `Task_RekapManual` | `TC-SYNC-01` |
+| **FR-003** | Idempotency Check | Unit Test | `DonationController.sync()` | `Task_Deduplicate` | `TC-IDEM-01` |
+| **FR-004** | Serah Terima Kas | Inspection / Demo | `HandoverService.create()` | `Task_SerahKoordinator` | `TC-HO-01` |
+| **FR-005** | Bukti Donasi WA | Integration Test | `NotificationGateway.send()` | `Task_IssueReceipt` | `TC-NOTIF-01` |
+| **FR-006** | Closing Report | Test | `ReportService.getClosing()` | `Task_HitungFisik` | `TC-REP-01` |
+
+---
+
+## 5. Lampiran & Isu Terbuka (Appendices & Open Issues)
+
+### Appendix A: Daftar Pertanyaan Elisitasi untuk Walkthrough PIC BMTZ
+
+| ID Isu | Topik Pertanyaan Elisitasi | Status Ground Truth |
 | :--- | :--- | :--- |
-| **OI-01** | Bagaimana proses penerimaan donasi berjalan saat ini? | Observasi proses aktual & catatan wawancara. |
-| **OI-02** | Apakah formulir kertas atau spreadsheet digunakan? | Contoh dokumen operasional & konfirmasi narasumber. |
-| **OI-03** | Bagaimana konfirmasi pembayaran tunai, QRIS, dan kartu dilakukan? | Prosedur resmi untuk setiap metode pembayaran. |
-| **OI-04** | Bagaimana sistem menangani pembayaran digital unconfirmed? | Aturan status transaksi dan pembayaran. |
-| **OI-05** | Bagaimana alur serah-terima tunai (petugas -> koordinator -> keuangan)? | Alur kerja, dokumen pendukung, dan pihak berwenang. |
-| **OI-06** | Bagaimana selisih antara uang tunai fisik dan catatan ditangani? | Prosedur pemeriksaan dan persetujuan selisih. |
-| **OI-07** | Bagaimana data donatur dihubungkan dengan transaksi? | Kontrak API dan aturan data minimum. |
-| **OI-08** | Apakah bukti donasi elektronik diperlukan? | Keputusan kanal & data kontak donatur. |
-| **OI-09** | Siapa yang boleh mengoreksi atau membatalkan transaksi? | Matriks kewenangan & prosedur persetujuan. |
-| **OI-10** | Bagaimana transaksi duplikat & konflik sinkronisasi diselesaikan? | Aturan deduplikasi & resolusi konflik. |
-| **OI-11** | Bagaimana penutupan sesi dilakukan jika ada transaksi pending? | Kebijakan penutupan sesi. |
-| **OI-12** | Apa target kinerja dan kapasitas transaksi yang diperlukan? | Target terukur berdasarkan kebutuhan operasional. |
-| **OI-13** | Apa kebijakan retensi dan perlindungan data? | Kebijakan organisasi & aturan hukum. |
-| **OI-14** | Siapa pemilik proses dan narasumber yang berwenang? | Stakeholder register & persetujuan peran. |
+| **OI-01** | Berapa rata-rata transaksi donasi per jam pada acara puncak luring? | TBD (Wawancara Minggu 2) |
+| **OI-02** | Perangkat apa yang dipakai petugas? (Milik BMTZ atau HP pribadi petugas?) | TBD (Wawancara Minggu 2) |
+| **OI-03** | Bagaimana penanganan jika terdapat selisih uang tunai fisik dan catatan sistem saat serah terima? | TBD (Wawancara Minggu 2) |
+| **OI-04** | Apakah QRIS yang digunakan bersifat statis atau dinamis per transaksi? | TBD (Wawancara Minggu 2) |
+
+### Appendix B: Candidate Change Requests (Kandidat CR Proses To-Be)
+
+* **CR-CAND-01 (Otomasi QRIS Dinamis):** Mengganti QRIS Statis manual dengan QRIS Dinamis API Artivisi langsung di layar tablet booth (Diajukan pada Perancangan Minggu 5).
+* **CR-CAND-02 (Bluetooth POS Thermal Printer):** Fitur cetak struk nota fisik langsung di lokasi booth untuk donatur sepuh (Kandidat Improvement Roadmap).
 
 ---
-
-## 11. Pengelolaan Perubahan Kebutuhan
-
-Setiap perubahan kebutuhan setelah dokumen ini disusun harus dicatat dan ditinjau melalui prosedur berikut:
-1. Mencatat perubahan beserta alasan dan sumbernya.
-2. Mengidentifikasi kebutuhan yang terdampak.
-3. Menilai dampaknya terhadap proses bisnis, antarmuka, data, implementasi, dan pengujian.
-4. Memperbarui ID, status, prioritas, serta matriks keterlacakan jika diperlukan.
-5. Memperoleh persetujuan dari pihak yang berwenang.
-6. Memperbarui versi dokumen dan riwayat perubahan.
-
----
-
-## 12. Penutup
-
-SRS versi 0.1 ini menjadi dasar awal untuk proses elisitasi dan analisis kebutuhan Subsistem Penerimaan Donasi Luring BMTZ. Dokumen ini disusun dengan mengacu pada ISO/IEC/IEEE 29148:2018. Langkah selanjutnya adalah memvalidasi kebutuhan bersama stakeholder untuk menjadikan SRS ini sebagai *baseline* pengembangan.
-
-*Akhir Dokumen — BMTZ-SRS-OFFLINE-001, Versi 0.1.*
+*Akhir Dokumen SRS — BMTZ-SRS-OFFLINE-001 (Baseline Candidate v1.0.0)*
